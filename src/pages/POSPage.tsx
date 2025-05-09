@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Search, Plus, Minus, X, CreditCard, Cash } from "lucide-react";
+import { Search, Plus, Minus, X, CreditCard, DollarSign, Package } from "lucide-react";
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -305,7 +305,7 @@ const POSPage: React.FC = () => {
                         <div className="flex items-center space-x-3 border rounded-md p-3">
                           <RadioGroupItem value="cash" id="cash" />
                           <Label htmlFor="cash" className="flex items-center cursor-pointer">
-                            <Cash className="mr-2" size={18} /> Cash
+                            <DollarSign className="mr-2" size={18} /> Cash
                           </Label>
                         </div>
                         
