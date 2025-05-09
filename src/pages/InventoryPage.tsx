@@ -23,10 +23,23 @@ const InventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("products");
   
-  // Product form state
+  // Product form state - fixing optional properties to match Product type
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<{
+    id: string;
+    name: string;
+    categoryId: string;
+    price: number;
+    discountedPrice?: number; // Make optional to match the type
+    taxRate: number;
+    stock: number;
+    reorderLevel: number;
+    sku?: string; // Make optional to match the type
+    barcode?: string; // Make optional to match the type
+    isService: boolean;
+    image?: string; // Make optional to match the type
+  }>({
     id: "",
     name: "",
     categoryId: "",
@@ -41,10 +54,14 @@ const InventoryPage: React.FC = () => {
     image: "/placeholder.svg" // Default image
   });
   
-  // Category form state
+  // Category form state - fixing optional properties to match Category type
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [categoryForm, setCategoryForm] = useState({
+  const [categoryForm, setCategoryForm] = useState<{
+    id: string;
+    name: string;
+    parentId?: string; // Make optional to match the type
+  }>({
     id: "",
     name: "",
     parentId: ""
@@ -556,3 +573,4 @@ const InventoryPage: React.FC = () => {
 };
 
 export default InventoryPage;
+
