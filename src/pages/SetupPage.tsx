@@ -1,7 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBusiness } from "@/contexts/BusinessContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { BUSINESS_TYPES } from "@/config/constants";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import Layout from "@/components/Layout";
 
 const SetupPage: React.FC = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const { updateBusiness, setConfigured, business } = useBusiness();
   
   const [businessName, setBusinessName] = useState(business.name);
@@ -20,6 +22,13 @@ const SetupPage: React.FC = () => {
   const [taxRate, setTaxRate] = useState(business.taxRate.toString());
   const [currency, setCurrency] = useState(business.currency);
   
+  useEffect(() => {
+    // If not logged in, redirect to login
+    if (!currentUser) {
+      navigate("/login");
+    }
+  }, [currentUser, navigate]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -41,7 +50,7 @@ const SetupPage: React.FC = () => {
   };
 
   return (
-    <Layout requireAuth={true}>
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto py-12 px-4">
         <h1 className="text-3xl font-bold mb-8 text-center">Business Setup</h1>
         
@@ -117,7 +126,7 @@ const SetupPage: React.FC = () => {
           </form>
         </Card>
       </div>
-    </Layout>
+    </div>
   );
 };
 

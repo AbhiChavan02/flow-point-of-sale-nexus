@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
   }
   
   // When logged in but business not configured
-  if (requireAuth && currentUser && !isConfigured) {
+  if (requireAuth && currentUser && !isConfigured && window.location.pathname !== "/setup") {
     return <Navigate to="/setup" />;
   }
   
