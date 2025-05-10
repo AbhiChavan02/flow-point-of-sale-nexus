@@ -27,10 +27,10 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
   // If still loading, show a loading screen
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex h-screen w-full items-center justify-center bg-background dark:bg-gray-950">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg">Loading...</p>
+          <p className="text-lg dark:text-white">Loading...</p>
         </div>
       </div>
     );
@@ -41,7 +41,7 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
     return (
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
           {children}
         </main>
       </div>
@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
   }
   
   // For non-authenticated pages (like login)
-  return <div className="min-h-screen bg-gray-50">{children}</div>;
+  return <div className="min-h-screen bg-gray-50 dark:bg-gray-950">{children}</div>;
 };
 
 export default Layout;

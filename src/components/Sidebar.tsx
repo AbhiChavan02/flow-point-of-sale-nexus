@@ -10,11 +10,16 @@ import {
   Settings,
   LogOut,
   CreditCard,
-  BarChart
+  BarChart,
+  CreditCard as Subscription
 } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { Badge } from "@/components/ui/badge";
 
 const Sidebar: React.FC = () => {
   const { currentUser, logout } = useAuth();
+  const { currentPlan } = useSubscription();
   const location = useLocation();
   
   const handleLogout = () => {
@@ -27,14 +32,21 @@ const Sidebar: React.FC = () => {
     { name: "Inventory", path: "/inventory", icon: <Package size={20} /> },
     { name: "Payments", path: "/payments", icon: <CreditCard size={20} /> },
     { name: "Reports", path: "/reports", icon: <BarChart size={20} /> },
+    { 
+      name: "Subscription", 
+      path: "/subscription", 
+      icon: <Subscription size={20} />,
+      badge: currentPlan?.tier !== "free" ? currentPlan?.tier : undefined
+    },
     { name: "Users", path: "/users", icon: <Users size={20} /> },
     { name: "Settings", path: "/settings", icon: <Settings size={20} /> }
   ];
 
   return (
-    <div className="min-w-60 bg-white border-r h-screen flex flex-col">
-      <div className="p-4 border-b">
-        <h1 className="text-xl font-bold">POS System</h1>
+    <div className="min-w-60 bg-sidebar border-r h-screen flex flex-col dark:bg-gray-900 dark:border-gray-800">
+      <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center">
+        <h1 className="text-xl font-bold dark:text-white">POS System</h1>
+        <ThemeToggle />
       </div>
       
       <div className="flex-1 overflow-y-auto py-4">
@@ -44,31 +56,38 @@ const Sidebar: React.FC = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center px-3 py-2 rounded-md text-sm transition-colors ${
+                `flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
                   isActive
-                    ? "bg-gray-100 text-gray-900 font-medium"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground dark:bg-gray-800 dark:text-white font-medium"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/50 dark:text-gray-300 dark:hover:bg-gray-800/70"
                 }`
               }
             >
-              <div className="mr-3 text-gray-500">{item.icon}</div>
-              {item.name}
+              <div className="flex items-center">
+                <div className="mr-3 text-sidebar-foreground dark:text-gray-400">{item.icon}</div>
+                {item.name}
+              </div>
+              {item.badge && (
+                <Badge variant="outline" className="capitalize">
+                  {item.badge}
+                </Badge>
+              )}
             </NavLink>
           ))}
         </nav>
       </div>
       
-      <div className="p-4 border-t">
+      <div className="p-4 border-t dark:border-gray-800">
         <div className="flex items-center mb-4">
-          <div className="w-8 h-8 rounded-full bg-gray-300 mr-2"></div>
+          <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 mr-2"></div>
           <div>
-            <p className="text-sm font-medium">{currentUser?.name}</p>
-            <p className="text-xs text-gray-500">{currentUser?.role}</p>
+            <p className="text-sm font-medium dark:text-white">{currentUser?.name}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{currentUser?.role}</p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center px-3 py-2 text-sm text-red-600 rounded-md hover:bg-red-50 transition-colors"
+          className="w-full flex items-center px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
         >
           <LogOut size={16} className="mr-2" />
           Logout
