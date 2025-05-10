@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
-import { Download, FileExcel, ChartBar, ChartLine } from "lucide-react";
+import { Download, FileText, ChartBar, ChartLine } from "lucide-react";
 import Layout from "@/components/Layout";
 import Header from "@/components/Header";
 import { useInventory } from "@/contexts/InventoryContext";
@@ -184,7 +183,7 @@ const ReportsPage: React.FC = () => {
               )}
               
               <Button onClick={exportToExcel} className="w-full">
-                <FileExcel className="mr-2 h-4 w-4" /> Export to Excel
+                <FileText className="mr-2 h-4 w-4" /> Export to Excel
               </Button>
             </CardContent>
           </Card>
@@ -288,10 +287,10 @@ const ReportsPage: React.FC = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button variant="outline" className="flex items-center">
-                <FileExcel className="mr-2 h-4 w-4" /> Export as CSV
+                <FileText className="mr-2 h-4 w-4" /> Export as CSV
               </Button>
               <Button variant="outline" className="flex items-center">
-                <FileExcel className="mr-2 h-4 w-4" /> Export as PDF
+                <FileText className="mr-2 h-4 w-4" /> Export as PDF
               </Button>
               <Button variant="outline" className="flex items-center">
                 <Download className="mr-2 h-4 w-4" /> Email Report
