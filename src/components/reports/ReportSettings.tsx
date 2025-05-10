@@ -5,9 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
-import { FileText } from "lucide-react";
-import { toast } from "sonner";
+import { format } from "date-fns";
+import { FileText, Loader2 } from "lucide-react";
 
 interface ReportSettingsProps {
   reportType: string;
@@ -19,6 +18,7 @@ interface ReportSettingsProps {
   endDate: Date;
   setEndDate: (date: Date) => void;
   onExport: () => void;
+  isGenerating?: boolean;
 }
 
 const ReportSettings: React.FC<ReportSettingsProps> = ({
@@ -31,35 +31,8 @@ const ReportSettings: React.FC<ReportSettingsProps> = ({
   endDate,
   setEndDate,
   onExport,
+  isGenerating = false,
 }) => {
-  // Function to handle date range selection
-  const handleDateRangeChange = (value: string) => {
-    setDateRange(value);
-    const now = new Date();
-    
-    switch (value) {
-      case "current_month":
-        setStartDate(startOfMonth(now));
-        setEndDate(endOfMonth(now));
-        break;
-      case "last_month":
-        const lastMonth = subMonths(now, 1);
-        setStartDate(startOfMonth(lastMonth));
-        setEndDate(endOfMonth(lastMonth));
-        break;
-      case "last_3_months":
-        setStartDate(startOfMonth(subMonths(now, 3)));
-        setEndDate(endOfMonth(now));
-        break;
-      case "custom":
-        // Leave dates as they are for custom selection
-        break;
-      default:
-        setStartDate(startOfMonth(now));
-        setEndDate(endOfMonth(now));
-    }
-  };
-
   return (
     <Card className="w-full lg:w-1/3">
       <CardHeader>
@@ -85,7 +58,7 @@ const ReportSettings: React.FC<ReportSettingsProps> = ({
         
         <div>
           <label className="text-sm font-medium mb-1 block">Date Range</label>
-          <Select value={dateRange} onValueChange={handleDateRangeChange}>
+          <Select value={dateRange} onValueChange={setDateRange}>
             <SelectTrigger>
               <SelectValue placeholder="Select date range" />
             </SelectTrigger>
@@ -140,8 +113,16 @@ const ReportSettings: React.FC<ReportSettingsProps> = ({
           </div>
         )}
         
-        <Button onClick={onExport} className="w-full">
-          <FileText className="mr-2 h-4 w-4" /> Export Report
+        <Button onClick={onExport} className="w-full" disabled={isGenerating}>
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
+            </>
+          ) : (
+            <>
+              <FileText className="mr-2 h-4 w-4" /> Export Report
+            </>
+          )}
         </Button>
       </CardContent>
     </Card>
