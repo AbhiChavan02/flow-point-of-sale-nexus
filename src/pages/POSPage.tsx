@@ -11,11 +11,23 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Search, Plus, Minus, X, CreditCard, DollarSign, Package } from "lucide-react";
+import { Search, Plus, Minus, X, CreditCard, DollarSign, Package, User, Phone, Link, Share } from "lucide-react";
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+// Form schema for customer information
+const customerSchema = z.object({
+  name: z.string().min(1, "Customer name is required"),
+  phone: z.string().min(6, "Valid phone number required"),
+});
+
+type CustomerFormValues = z.infer<typeof customerSchema>;
 
 const POSPage: React.FC = () => {
   const { products, categories } = useInventory();
@@ -27,7 +39,18 @@ const POSPage: React.FC = () => {
   const [discountAmount, setDiscountAmount] = useState("");
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("cash");
+  const [showReceiptDialog, setShowReceiptDialog] = useState(false);
+  const [receiptUrl, setReceiptUrl] = useState("");
   
+  // Customer information form
+  const form = useForm<CustomerFormValues>({
+    resolver: zodResolver(customerSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+    },
+  });
+
   // Start a new order if none exists
   React.useEffect(() => {
     if (!currentOrder) {
@@ -62,8 +85,42 @@ const POSPage: React.FC = () => {
   };
   
   const handleCompleteOrder = () => {
-    completeOrder(selectedPaymentMethod as any);
+    const customerData = form.getValues();
+    completeOrder(selectedPaymentMethod as any, customerData);
+    
+    // Generate a mock receipt URL for demo purposes
+    // In a real app, this would be a link to a real receipt
+    const receiptId = `receipt-${Date.now()}`;
+    const mockReceiptUrl = `https://yourapp.com/receipts/${receiptId}`;
+    setReceiptUrl(mockReceiptUrl);
+    
     setShowPaymentDialog(false);
+    setShowReceiptDialog(true);
+  };
+  
+  const handleShareReceipt = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Payment Receipt",
+          text: `Your receipt from ${business.name}`,
+          url: receiptUrl,
+        });
+        toast.success("Receipt shared successfully");
+      } catch (error) {
+        console.error("Error sharing receipt:", error);
+        toast.error("Failed to share receipt");
+      }
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(receiptUrl);
+      toast.success("Receipt link copied to clipboard");
+    }
+  };
+  
+  const copyReceiptLink = () => {
+    navigator.clipboard.writeText(receiptUrl);
+    toast.success("Receipt link copied to clipboard");
   };
   
   return (
@@ -280,14 +337,48 @@ const POSPage: React.FC = () => {
                     Pay Now
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-md">
                   <DialogHeader>
                     <DialogTitle>Complete Payment</DialogTitle>
                     <DialogDescription>
-                      Select a payment method to complete the order
+                      Enter customer information and select a payment method
                     </DialogDescription>
                   </DialogHeader>
                   
+                  <Form {...form}>
+                    <form className="space-y-4 py-2">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center">
+                              <User className="mr-2" size={16} /> Customer Name
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter customer name" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center">
+                              <Phone className="mr-2" size={16} /> Phone Number
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter phone number" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </form>
+                  </Form>
+
                   <div className="py-4">
                     <h3 className="font-semibold text-lg mb-1">
                       Total: {business.currency} {currentOrder?.total.toFixed(2) || "0.00"}
@@ -321,7 +412,13 @@ const POSPage: React.FC = () => {
                   
                   <DialogFooter>
                     <Button onClick={() => setShowPaymentDialog(false)} variant="outline">Cancel</Button>
-                    <Button onClick={handleCompleteOrder}>Complete Order</Button>
+                    <Button 
+                      onClick={() => {
+                        form.handleSubmit(handleCompleteOrder)();
+                      }}
+                    >
+                      Complete Order
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -329,6 +426,60 @@ const POSPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Receipt Sharing Dialog */}
+      <Dialog open={showReceiptDialog} onOpenChange={setShowReceiptDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Payment Successful</DialogTitle>
+            <DialogDescription>
+              The order has been completed successfully. Share the receipt with the customer.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="border rounded-md p-4 mb-4">
+              <h3 className="font-medium mb-1">Receipt Link</h3>
+              <div className="flex items-center">
+                <Input 
+                  value={receiptUrl} 
+                  readOnly 
+                  className="mr-2 font-mono text-sm"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={copyReceiptLink}
+                >
+                  <Link size={16} />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex justify-center">
+              <Button 
+                onClick={handleShareReceipt} 
+                className="w-full"
+              >
+                <Share className="mr-2" size={16} />
+                Share Receipt
+              </Button>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              onClick={() => {
+                setShowReceiptDialog(false);
+                form.reset();
+                startNewOrder();
+              }}
+            >
+              New Order
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

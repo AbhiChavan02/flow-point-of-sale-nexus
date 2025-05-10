@@ -53,6 +53,8 @@ export interface Order {
   id: string;
   items: OrderItem[];
   customerId?: string;
+  customerName?: string;
+  customerPhone?: string;
   tableId?: string;
   roomId?: string;
   subtotal: number;
