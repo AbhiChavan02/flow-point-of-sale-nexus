@@ -25,14 +25,62 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Light mode glass effect */
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .fade-in {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+
+.pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0) 0%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .shimmer {
+  background: linear-gradient(90deg, 
+    rgba(30, 41, 59, 0) 0%, 
+    rgba(30, 41, 59, 0.2) 50%, 
+    rgba(30, 41, 59, 0) 100%);
+  background-size: 200% 100%;
 }
 
 /* Gradient backgrounds */
@@ -42,6 +90,15 @@
 
 .dark .hero-gradient {
   background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--primary)) 100%);
+}
+
+/* Premium gradient */
+.premium-gradient {
+  background: linear-gradient(135deg, #a867ff 0%, #6f45e3 100%);
+}
+
+.dark .premium-gradient {
+  background: linear-gradient(135deg, #8255e6 0%, #4f2f9f 100%);
 }
 
 /* Modern scrollbar */
@@ -71,7 +128,7 @@
 
 /* Card hover effects */
 .hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {
@@ -104,12 +161,97 @@
 
 .status-active {
   background-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
 .status-pending {
   background-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
 .status-inactive {
   background-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Subscription plan badges */
+.plan-badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
+
+.plan-free {
+  @apply bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100;
+}
+
+.plan-basic {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100;
+}
+
+.plan-premium {
+  @apply bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100;
+}
+
+.plan-enterprise {
+  @apply bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100;
+}
+
+/* Interactive button hover effect */
+.button-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: left 0.7s ease;
+}
+
+.button-shine:hover::after {
+  left: 100%;
+}
+
+/* Beautiful loading spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid hsl(var(--muted));
+  border-top-color: hsl(var(--primary));
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Value propositions */
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dark .feature-icon {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: rgba(59, 130, 246, 1);
+}
+
+.feature-icon {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: rgba(59, 130, 246, 1);
 }
