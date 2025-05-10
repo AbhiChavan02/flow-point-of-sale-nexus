@@ -1,13 +1,7 @@
-
 import React, { createContext, useState, useContext } from "react";
-import { Order, OrderItem, Product, PaymentMethod } from "@/types";
+import { Order, OrderItem, Product, PaymentMethod, CustomerInfo } from "@/types";
 import { useAuth } from "./AuthContext";
 import { toast } from "sonner";
-
-interface CustomerInfo {
-  name: string;
-  phone: string;
-}
 
 interface OrderContextType {
   currentOrder: Order | null;
@@ -17,7 +11,7 @@ interface OrderContextType {
   removeItemFromOrder: (itemId: string) => void;
   updateItemQuantity: (itemId: string, quantity: number) => void;
   applyDiscount: (amount: number) => void;
-  completeOrder: (paymentMethod: PaymentMethod, customerInfo?: CustomerInfo) => void;
+  completeOrder: (paymentMethod: PaymentMethod, customerInfo: CustomerInfo) => void;
   cancelOrder: () => void;
 }
 
@@ -148,15 +142,15 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   };
   
-  const completeOrder = (paymentMethod: PaymentMethod, customerInfo?: CustomerInfo) => {
+  const completeOrder = (paymentMethod: PaymentMethod, customerInfo: CustomerInfo) => {
     if (!currentOrder) return;
     
     const completedOrder: Order = {
       ...currentOrder,
       status: "completed",
       paymentMethod,
-      customerName: customerInfo?.name,
-      customerPhone: customerInfo?.phone
+      customerName: customerInfo.name,
+      customerPhone: customerInfo.phone
     };
     
     setOrders(prevOrders => [completedOrder, ...prevOrders]);

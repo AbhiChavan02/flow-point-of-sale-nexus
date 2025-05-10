@@ -49,6 +49,11 @@ export interface OrderItem {
   price: number;
 }
 
+export interface CustomerInfo {
+  name: string;
+  phone: string;
+}
+
 export interface Order {
   id: string;
   items: OrderItem[];
