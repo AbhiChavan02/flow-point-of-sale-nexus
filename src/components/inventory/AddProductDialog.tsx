@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import ProductForm from "./ProductForm";
 import { Product } from "@/types";
 import { useInventory } from "@/contexts/InventoryContext";
@@ -43,7 +44,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl dark:bg-gray-800 dark:border-gray-700">
+      <DialogContent className="sm:max-w-xl dark:bg-gray-800 dark:border-gray-700 flex flex-col max-h-[85vh]">
         <DialogHeader>
           <DialogTitle className="dark:text-white">
             {initialData ? "Edit Product" : "Add New Product"}
@@ -55,11 +56,15 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <ProductForm 
-          initialData={initialData} 
-          onSubmit={handleSubmit}
-          onCancel={() => onOpenChange(false)}
-        />
+        <ScrollArea className="flex-1 pr-4 -mr-4">
+          <div className="pb-6">
+            <ProductForm 
+              initialData={initialData} 
+              onSubmit={handleSubmit}
+              onCancel={() => onOpenChange(false)}
+            />
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
