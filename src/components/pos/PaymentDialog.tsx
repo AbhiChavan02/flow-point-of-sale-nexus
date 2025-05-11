@@ -46,7 +46,12 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
 
   const handleCompleteOrder = () => {
     form.handleSubmit((data) => {
-      onCompleteOrder(selectedPaymentMethod as PaymentMethod, data);
+      // Ensure data conforms to CustomerInfo type (both name and phone are guaranteed to be non-empty strings due to zod validation)
+      const customerInfo: CustomerInfo = {
+        name: data.name,
+        phone: data.phone
+      };
+      onCompleteOrder(selectedPaymentMethod as PaymentMethod, customerInfo);
     })();
   };
 
