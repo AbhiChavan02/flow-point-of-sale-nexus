@@ -20,24 +20,25 @@ const ReceiptDialog: React.FC<ReceiptDialogProps> = ({
   onNewOrder
 }) => {
   const handleShareReceipt = async () => {
-    if (navigator.share) {
-      try {
+    try {
+      // Check if Web Share API is available
+      if (navigator.share) {
         await navigator.share({
           title: "Payment Receipt",
           text: "Your receipt",
           url: receiptUrl,
         });
         toast.success("Receipt shared successfully");
-      } catch (error) {
-        console.error("Error sharing receipt:", error);
-        // Handle user canceling the share action without showing an error toast
-        if (error instanceof Error && error.name !== "AbortError") {
-          toast.error("Failed to share receipt");
-        }
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        copyReceiptLink();
       }
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      copyReceiptLink();
+    } catch (error) {
+      console.error("Error sharing receipt:", error);
+      // Handle user canceling the share action without showing an error toast
+      if (error instanceof Error && error.name !== "AbortError") {
+        toast.error("Failed to share receipt");
+      }
     }
   };
   

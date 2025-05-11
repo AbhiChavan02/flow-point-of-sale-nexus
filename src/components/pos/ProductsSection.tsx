@@ -67,7 +67,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({ onAddItem }) => {
         {filteredProducts.map(product => (
           <Card key={product.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={() => onAddItem(product)}>
             <CardHeader className="p-4 pb-2">
-              <div className="aspect-square bg-gray-100 rounded-md mb-3 flex items-center justify-center">
+              <div className="aspect-square bg-gray-100 rounded-md mb-3 flex items-center justify-center dark:bg-gray-800">
                 {product.image ? (
                   <img 
                     src={product.image} 
@@ -84,11 +84,11 @@ const ProductsSection: React.FC<ProductsSectionProps> = ({ onAddItem }) => {
               <div>
                 {product.discountedPrice ? (
                   <>
-                    <span className="font-semibold">{business.currency} {product.discountedPrice.toFixed(2)}</span>
+                    <span className="font-semibold dark:text-white">{business.currency} {product.discountedPrice.toFixed(2)}</span>
                     <span className="text-sm text-gray-400 line-through ml-2">{business.currency} {product.price.toFixed(2)}</span>
                   </>
                 ) : (
-                  <span className="font-semibold">{business.currency} {product.price.toFixed(2)}</span>
+                  <span className="font-semibold dark:text-white">{business.currency} {product.price.toFixed(2)}</span>
                 )}
               </div>
               {product.isService && <Badge>Service</Badge>}

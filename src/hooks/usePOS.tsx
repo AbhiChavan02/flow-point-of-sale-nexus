@@ -33,11 +33,22 @@ export const usePOS = () => {
       
       // Generate a receipt URL that includes order details
       const orderId = `receipt-${Date.now()}`;
-      const mockReceiptUrl = `https://yourapp.com/receipts/${orderId}?customer=${encodeURIComponent(customerInfo.name)}`;
+      const receiptData = {
+        orderId,
+        customerName: customerInfo.name,
+        items: currentOrder?.items.length || 0,
+        total: currentOrder?.total || 0,
+        date: new Date().toISOString()
+      };
+      
+      // Create a base64 encoded string with receipt data
+      const encodedData = btoa(JSON.stringify(receiptData));
+      const mockReceiptUrl = `https://yourapp.com/receipts/${orderId}?data=${encodedData}`;
       setReceiptUrl(mockReceiptUrl);
       
       setShowPaymentDialog(false);
       setShowReceiptDialog(true);
+      toast.success("Order completed successfully!");
     } catch (error) {
       console.error("Error completing order:", error);
       toast.error("Failed to complete order. Please try again.");
