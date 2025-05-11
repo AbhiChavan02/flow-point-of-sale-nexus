@@ -12,55 +12,29 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Image } from "lucide-react";
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
+import AddProductDialog from "@/components/inventory/AddProductDialog";
+import ProductImageUpload from "@/components/pos/ProductImageUpload";
 
 const InventoryPage: React.FC = () => {
-  const { products, categories, addProduct, updateProduct, deleteProduct, addCategory, updateCategory, deleteCategory } = useInventory();
+  const { products, categories, deleteProduct, addCategory, updateCategory, deleteCategory } = useInventory();
   const { business } = useBusiness();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("products");
   
-  // Product form state - fixing optional properties to match Product type
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [productForm, setProductForm] = useState<{
-    id: string;
-    name: string;
-    categoryId: string;
-    price: number;
-    discountedPrice?: number; // Make optional to match the type
-    taxRate: number;
-    stock: number;
-    reorderLevel: number;
-    sku?: string; // Make optional to match the type
-    barcode?: string; // Make optional to match the type
-    isService: boolean;
-    image?: string; // Make optional to match the type
-  }>({
-    id: "",
-    name: "",
-    categoryId: "",
-    price: 0,
-    discountedPrice: 0,
-    taxRate: business.taxRate,
-    stock: 0,
-    reorderLevel: 0,
-    sku: "",
-    barcode: "",
-    isService: false,
-    image: "/placeholder.svg" // Default image
-  });
   
-  // Category form state - fixing optional properties to match Category type
+  // Category form state
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryForm, setCategoryForm] = useState<{
     id: string;
     name: string;
-    parentId?: string; // Make optional to match the type
+    parentId?: string;
   }>({
     id: "",
     name: "",
@@ -73,45 +47,6 @@ const InventoryPage: React.FC = () => {
     product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.barcode?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
-  // Handle product form submission
-  const handleProductSubmit = () => {
-    if (!productForm.name) {
-      toast.error("Product name is required");
-      return;
-    }
-    
-    if (!productForm.categoryId) {
-      toast.error("Category is required");
-      return;
-    }
-    
-    if (productForm.price <= 0 && !productForm.isService) {
-      toast.error("Price must be greater than zero");
-      return;
-    }
-    
-    const productData: Product = {
-      ...productForm,
-      price: parseFloat(productForm.price.toString()),
-      discountedPrice: productForm.discountedPrice ? parseFloat(productForm.discountedPrice.toString()) : undefined,
-      taxRate: parseFloat(productForm.taxRate.toString()),
-      stock: parseInt(productForm.stock.toString()),
-      reorderLevel: parseInt(productForm.reorderLevel.toString())
-    };
-    
-    if (editingProduct) {
-      updateProduct(editingProduct.id, productData);
-      toast.success("Product updated successfully");
-    } else {
-      productData.id = `product-${Date.now()}`;
-      addProduct(productData);
-      toast.success("Product added successfully");
-    }
-    
-    setIsProductDialogOpen(false);
-    resetProductForm();
-  };
   
   // Handle category form submission
   const handleCategorySubmit = () => {
@@ -138,24 +73,6 @@ const InventoryPage: React.FC = () => {
   };
   
   // Reset forms
-  const resetProductForm = () => {
-    setProductForm({
-      id: "",
-      name: "",
-      categoryId: "",
-      price: 0,
-      discountedPrice: 0,
-      taxRate: business.taxRate,
-      stock: 0,
-      reorderLevel: 0,
-      sku: "",
-      barcode: "",
-      isService: false,
-      image: "/placeholder.svg"
-    });
-    setEditingProduct(null);
-  };
-  
   const resetCategoryForm = () => {
     setCategoryForm({
       id: "",
@@ -168,9 +85,6 @@ const InventoryPage: React.FC = () => {
   // Edit product
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
-    setProductForm({
-      ...product
-    });
     setIsProductDialogOpen(true);
   };
   
@@ -206,6 +120,12 @@ const InventoryPage: React.FC = () => {
     }
   };
 
+  // Close product dialog & reset
+  const handleCloseProductDialog = () => {
+    setIsProductDialogOpen(false);
+    setEditingProduct(null);
+  };
+
   return (
     <Layout>
       <Header title="Inventory Management" />
@@ -219,162 +139,13 @@ const InventoryPage: React.FC = () => {
             </TabsList>
             
             {activeTab === "products" ? (
-              <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="flex items-center gap-2">
-                    <Plus size={16} />
-                    <span>Add Product</span>
-                  </Button>
-                </DialogTrigger>
-                
-                <DialogContent className="sm:max-w-[600px]">
-                  <DialogHeader>
-                    <DialogTitle>{editingProduct ? "Edit Product" : "Add New Product"}</DialogTitle>
-                    <DialogDescription>
-                      {editingProduct ? "Modify product details below" : "Enter product details to add to inventory"}
-                    </DialogDescription>
-                  </DialogHeader>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name *</Label>
-                      <Input
-                        id="name"
-                        value={productForm.name}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="Product name"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category *</Label>
-                      <Select 
-                        value={productForm.categoryId}
-                        onValueChange={(value) => setProductForm(prev => ({ ...prev, categoryId: value }))}
-                      >
-                        <SelectTrigger id="category">
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map(category => (
-                            <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="price">Price ({business.currency})</Label>
-                      <Input
-                        id="price"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={productForm.price}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
-                        placeholder="0.00"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="discountedPrice">Discounted Price ({business.currency}) (Optional)</Label>
-                      <Input
-                        id="discountedPrice"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={productForm.discountedPrice || ""}
-                        onChange={(e) => setProductForm(prev => ({ 
-                          ...prev, 
-                          discountedPrice: e.target.value ? parseFloat(e.target.value) : 0
-                        }))}
-                        placeholder="0.00"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="taxRate">Tax Rate (%)</Label>
-                      <Input
-                        id="taxRate"
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        value={productForm.taxRate}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, taxRate: parseFloat(e.target.value) }))}
-                        placeholder="0"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="stock">Stock Quantity</Label>
-                      <Input
-                        id="stock"
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={productForm.stock}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, stock: parseInt(e.target.value) }))}
-                        placeholder="0"
-                        disabled={productForm.isService}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="reorderLevel">Reorder Level</Label>
-                      <Input
-                        id="reorderLevel"
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={productForm.reorderLevel}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, reorderLevel: parseInt(e.target.value) }))}
-                        placeholder="0"
-                        disabled={productForm.isService}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="sku">SKU (Optional)</Label>
-                      <Input
-                        id="sku"
-                        value={productForm.sku}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, sku: e.target.value }))}
-                        placeholder="SKU code"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="barcode">Barcode (Optional)</Label>
-                      <Input
-                        id="barcode"
-                        value={productForm.barcode}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, barcode: e.target.value }))}
-                        placeholder="Barcode"
-                      />
-                    </div>
-                    
-                    <div className="col-span-2 flex items-center space-x-2 pt-2">
-                      <Switch
-                        id="isService"
-                        checked={productForm.isService}
-                        onCheckedChange={(checked) => setProductForm(prev => ({ 
-                          ...prev, 
-                          isService: checked,
-                          stock: checked ? 999 : prev.stock,
-                          reorderLevel: checked ? 0 : prev.reorderLevel
-                        }))}
-                      />
-                      <Label htmlFor="isService">This is a service (not physical product)</Label>
-                    </div>
-                  </div>
-                  
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleProductSubmit}>{editingProduct ? "Update Product" : "Add Product"}</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Button 
+                className="flex items-center gap-2"
+                onClick={() => setIsProductDialogOpen(true)}
+              >
+                <Plus size={16} />
+                <span>Add Product</span>
+              </Button>
             ) : (
               <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
                 <DialogTrigger asChild>
@@ -415,7 +186,7 @@ const InventoryPage: React.FC = () => {
                         <SelectContent>
                           <SelectItem value="">None (Top Level)</SelectItem>
                           {categories
-                            .filter(c => c.id !== categoryForm.id) // Prevent self-reference
+                            .filter(c => c.id !== categoryForm.id)
                             .map(category => (
                               <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
                             ))}
@@ -451,6 +222,7 @@ const InventoryPage: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
+                    <TableHead>Image</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Price ({business.currency})</TableHead>
                     <TableHead>Stock</TableHead>
@@ -461,7 +233,7 @@ const InventoryPage: React.FC = () => {
                 <TableBody>
                   {filteredProducts.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                         No products found. Add your first product to get started.
                       </TableCell>
                     </TableRow>
@@ -473,6 +245,21 @@ const InventoryPage: React.FC = () => {
                       return (
                         <TableRow key={product.id}>
                           <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>
+                            {product.image ? (
+                              <div className="w-12 h-12 rounded-md border overflow-hidden bg-gray-100">
+                                <img 
+                                  src={product.image} 
+                                  alt={product.name} 
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 flex items-center justify-center border rounded-md bg-gray-100 text-gray-400">
+                                <Image size={18} />
+                              </div>
+                            )}
+                          </TableCell>
                           <TableCell>{category?.name || "Uncategorized"}</TableCell>
                           <TableCell>
                             {product.discountedPrice ? (
@@ -568,9 +355,15 @@ const InventoryPage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      
+      {/* Add/Edit product dialog using the AddProductDialog component */}
+      <AddProductDialog
+        open={isProductDialogOpen}
+        onOpenChange={handleCloseProductDialog}
+        initialData={editingProduct || undefined}
+      />
     </Layout>
   );
 };
 
 export default InventoryPage;
-
