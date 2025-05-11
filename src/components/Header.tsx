@@ -11,9 +11,10 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 interface HeaderProps {
   title: string;
+  children?: React.ReactNode; // Adding children prop to the interface
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ title, children }) => {
   const { currentOrder, startNewOrder } = useOrder();
   const { currentPlan, isSubscribed, expiryDate } = useSubscription();
   
@@ -41,6 +42,9 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       </div>
       
       <div className="flex items-center gap-4">
+        {/* Children will be rendered here */}
+        {children}
+
         {/* Theme toggle */}
         <ThemeToggle />
         
