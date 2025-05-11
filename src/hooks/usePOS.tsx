@@ -28,15 +28,20 @@ export const usePOS = () => {
   };
   
   const handleCompleteOrder = (paymentMethod: PaymentMethod, customerInfo: CustomerInfo) => {
-    completeOrder(paymentMethod, customerInfo);
-    
-    // Generate a mock receipt URL for demo purposes
-    const receiptId = `receipt-${Date.now()}`;
-    const mockReceiptUrl = `https://yourapp.com/receipts/${receiptId}`;
-    setReceiptUrl(mockReceiptUrl);
-    
-    setShowPaymentDialog(false);
-    setShowReceiptDialog(true);
+    try {
+      completeOrder(paymentMethod, customerInfo);
+      
+      // Generate a receipt URL that includes order details
+      const orderId = `receipt-${Date.now()}`;
+      const mockReceiptUrl = `https://yourapp.com/receipts/${orderId}?customer=${encodeURIComponent(customerInfo.name)}`;
+      setReceiptUrl(mockReceiptUrl);
+      
+      setShowPaymentDialog(false);
+      setShowReceiptDialog(true);
+    } catch (error) {
+      console.error("Error completing order:", error);
+      toast.error("Failed to complete order. Please try again.");
+    }
   };
   
   const handleStartNewOrder = () => {

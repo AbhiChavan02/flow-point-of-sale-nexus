@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
 import { BarChart, LineChart, PieChart, ResponsiveContainer, Bar, Line, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Mock data for dashboard
@@ -38,9 +37,16 @@ const DashboardPage: React.FC = () => {
       <Header title="Dashboard" />
       
       <div className="p-6">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2">Welcome back, {currentUser?.name}</h2>
-          <p className="text-gray-600">Here's an overview of your business performance</p>
+        <div className="mb-6 flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Welcome back, {currentUser?.name}</h2>
+            <p className="text-gray-600 dark:text-gray-400">Here's an overview of your business performance</p>
+          </div>
+          <Button asChild className="flex items-center gap-2">
+            <Link to="/inventory?action=new">
+              <Plus size={18} /> Add New Product
+            </Link>
+          </Button>
         </div>
         
         {/* Quick Stats */}
