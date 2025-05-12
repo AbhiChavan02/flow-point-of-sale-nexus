@@ -69,7 +69,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
             </SheetDescription>
           </SheetHeader>
           
-          <ScrollArea className="flex-1 px-6 overflow-y-auto">
+          <div className="flex-1 px-6 overflow-y-auto">
             <div className="pb-24 pt-2">
               <ProductForm 
                 initialData={initialData} 
@@ -77,7 +77,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
                 onCancel={() => onOpenChange(false)}
               />
             </div>
-          </ScrollArea>
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -97,7 +97,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea className="flex-1 pr-4 -mr-4 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto pr-4">
           <div className="pb-24">
             <ProductForm 
               initialData={initialData} 
@@ -105,7 +105,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
               onCancel={() => onOpenChange(false)}
             />
           </div>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );

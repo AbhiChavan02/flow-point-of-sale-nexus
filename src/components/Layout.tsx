@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import Sidebar from "@/components/Sidebar";
@@ -19,6 +19,13 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
   const { isConfigured } = useBusiness();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Close sidebar when route changes on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [window.location.pathname, isMobile]);
   
   // Handle authentication check
   if (requireAuth && !isLoading && !currentUser) {
@@ -53,14 +60,14 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="fixed top-4 left-4 z-20 bg-background/80 backdrop-blur-sm shadow-sm"
+                className="fixed top-4 left-4 z-30 bg-background/80 backdrop-blur-sm shadow-sm"
                 onClick={() => setSidebarOpen(true)}
               >
                 <Menu size={24} />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-72 max-w-[80vw]">
+            <SheetContent side="left" className="p-0 w-72 max-w-[85vw] z-50">
               <Sidebar onNavClick={() => setSidebarOpen(false)} />
             </SheetContent>
           </Sheet>

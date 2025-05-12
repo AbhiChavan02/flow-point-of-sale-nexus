@@ -54,6 +54,7 @@ const POSPage: React.FC = () => {
                 variant={activeSection === "products" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setActiveSection("products")}
+                className="whitespace-nowrap"
               >
                 Products
               </Button>
@@ -61,7 +62,7 @@ const POSPage: React.FC = () => {
                 variant={activeSection === "order" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setActiveSection("order")}
-                className="relative"
+                className="relative whitespace-nowrap"
               >
                 <ShoppingCart className="w-4 h-4 mr-1" />
                 Order
@@ -77,6 +78,7 @@ const POSPage: React.FC = () => {
             variant="outline" 
             size="sm" 
             onClick={() => setShowAddProductDialog(true)}
+            className="whitespace-nowrap"
           >
             <PlusCircle className="mr-1" size={16} />
             {isMobile ? "New" : "New Product"}
