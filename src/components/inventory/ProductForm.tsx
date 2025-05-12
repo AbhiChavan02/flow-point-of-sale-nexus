@@ -56,7 +56,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6 relative">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
         <div className="space-y-4">
           <div>
@@ -188,8 +188,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
         </div>
       </div>
       
-      {/* Fixed position buttons at the bottom for both mobile and desktop views */}
-      <div className={`flex justify-end space-x-3 pt-4 ${isMobile ? "sticky bottom-0 bg-background pb-4 border-t mt-4 pt-4 px-2" : "sticky bottom-0 bg-background py-4 border-t mt-6"}`}>
+      {/* Fixed position buttons at the bottom that are always visible */}
+      <div className={`flex justify-end space-x-3 pt-4 ${isMobile ? 
+        "sticky bottom-0 bg-background pb-4 border-t mt-4 pt-4 px-2 z-10" : 
+        "sticky bottom-0 bg-background py-4 border-t mt-6 z-10"}`}>
         <Button type="button" variant="outline" onClick={onCancel} size="lg">
           Cancel
         </Button>
