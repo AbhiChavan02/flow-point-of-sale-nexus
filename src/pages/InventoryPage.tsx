@@ -9,12 +9,15 @@ import Layout from "@/components/Layout";
 import ProductsList from "@/components/inventory/ProductsList";
 import CategoriesList from "@/components/inventory/CategoriesList";
 import CategoryDialog from "@/components/inventory/CategoryDialog";
+import AddProductDialog from "@/components/inventory/AddProductDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const InventoryPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const isMobile = useIsMobile();
   
   // Category dialog handlers
   const handleOpenCategoryDialog = (category?: Category) => {
@@ -44,7 +47,7 @@ const InventoryPage: React.FC = () => {
                 onClick={() => setIsProductDialogOpen(true)}
               >
                 <Plus size={16} />
-                <span>Add Product</span>
+                <span>{isMobile ? "Add" : "Add Product"}</span>
               </Button>
             ) : (
               <Button 
@@ -52,7 +55,7 @@ const InventoryPage: React.FC = () => {
                 onClick={() => handleOpenCategoryDialog()}
               >
                 <Plus size={16} />
-                <span>Add Category</span>
+                <span>{isMobile ? "Add" : "Add Category"}</span>
               </Button>
             )}
           </div>
@@ -72,6 +75,12 @@ const InventoryPage: React.FC = () => {
         open={isCategoryDialogOpen}
         onOpenChange={setIsCategoryDialogOpen}
         editingCategory={editingCategory}
+      />
+      
+      {/* Product dialog */}
+      <AddProductDialog 
+        open={isProductDialogOpen}
+        onOpenChange={setIsProductDialogOpen}
       />
     </Layout>
   );

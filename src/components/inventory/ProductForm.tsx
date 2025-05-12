@@ -8,8 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { useForm, Controller } from "react-hook-form";
 import { useInventory } from "@/contexts/InventoryContext";
 import ProductImageUpload from "@/components/pos/ProductImageUpload";
-import { toast } from "sonner";
 import { Product } from "@/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProductFormProps {
   initialData?: Partial<Product>;
@@ -19,6 +19,8 @@ interface ProductFormProps {
 
 const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCancel }) => {
   const { categories } = useInventory();
+  const isMobile = useIsMobile();
+  
   const { register, control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       name: initialData?.name || "",
@@ -184,7 +186,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit, onCanc
         </div>
       </div>
       
-      <div className="flex justify-end space-x-3 pt-4">
+      <div className={`flex justify-end space-x-3 pt-4 ${isMobile ? "sticky bottom-0 bg-background pb-4 border-t mt-4 pt-4" : ""}`}>
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>

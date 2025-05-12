@@ -6,6 +6,8 @@ import ProductForm from "./ProductForm";
 import { Product } from "@/types";
 import { useInventory } from "@/contexts/InventoryContext";
 import { toast } from "sonner";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AddProductDialogProps {
   open: boolean;
@@ -18,11 +20,12 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
   onOpenChange, 
   initialData 
 }) => {
-  const { addProduct } = useInventory();
+  const { addProduct, updateProduct } = useInventory();
+  const isMobile = useIsMobile();
   
   const handleSubmit = (data: Partial<Product>) => {
     // Generate an ID if it's a new product
-    const newProduct: Product = {
+    const productData: Product = {
       id: initialData?.id || `prod-${Date.now()}`,
       name: data.name || "",
       price: data.price || 0,
@@ -37,10 +40,48 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
       discountedPrice: data.discountedPrice
     };
     
-    addProduct(newProduct);
+    if (initialData?.id) {
+      // Update existing product
+      updateProduct(initialData.id, productData);
+      toast.success("Product updated successfully!");
+    } else {
+      // Add new product
+      addProduct(productData);
+      toast.success("Product created successfully!");
+    }
+    
     onOpenChange(false);
-    toast.success(`Product ${initialData ? "updated" : "created"} successfully!`);
   };
+  
+  // Render a Sheet on mobile and Dialog on desktop
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="bottom" className="h-[85vh] sm:h-[85vh] p-0 flex flex-col">
+          <SheetHeader className="px-6 pt-6">
+            <SheetTitle>
+              {initialData ? "Edit Product" : "Add New Product"}
+            </SheetTitle>
+            <SheetDescription>
+              {initialData 
+                ? "Update the details of your existing product." 
+                : "Fill in the details to create a new product in your inventory."}
+            </SheetDescription>
+          </SheetHeader>
+          
+          <ScrollArea className="flex-1 px-6">
+            <div className="pb-20 pt-2">
+              <ProductForm 
+                initialData={initialData} 
+                onSubmit={handleSubmit}
+                onCancel={() => onOpenChange(false)}
+              />
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
+    );
+  }
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

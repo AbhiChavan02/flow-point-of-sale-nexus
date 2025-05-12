@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import Header from "@/components/Header";
 import ProductsSection from "@/components/pos/ProductsSection";
@@ -10,6 +10,7 @@ import AddProductDialog from "@/components/inventory/AddProductDialog";
 import { usePOS } from "@/hooks/usePOS";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const POSPage: React.FC = () => {
   const {
@@ -29,13 +30,14 @@ const POSPage: React.FC = () => {
   } = usePOS();
 
   const [showAddProductDialog, setShowAddProductDialog] = useState(false);
+  const isMobile = useIsMobile();
 
   // Start a new order if none exists
-  React.useEffect(() => {
+  useEffect(() => {
     if (!currentOrder) {
       handleStartNewOrder();
     }
-  }, [currentOrder]);
+  }, [currentOrder, handleStartNewOrder]);
 
   return (
     <Layout>
@@ -47,7 +49,7 @@ const POSPage: React.FC = () => {
           onClick={() => setShowAddProductDialog(true)}
         >
           <PlusCircle className="mr-1" size={16} />
-          New Product
+          {isMobile ? "New" : "New Product"}
         </Button>
       </Header>
       
