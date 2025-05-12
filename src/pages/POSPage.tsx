@@ -9,8 +9,9 @@ import ReceiptDialog from "@/components/pos/ReceiptDialog";
 import AddProductDialog from "@/components/inventory/AddProductDialog";
 import { usePOS } from "@/hooks/usePOS";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ShoppingCart } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 const POSPage: React.FC = () => {
   const {
@@ -32,6 +33,9 @@ const POSPage: React.FC = () => {
   const [showAddProductDialog, setShowAddProductDialog] = useState(false);
   const isMobile = useIsMobile();
   const [activeSection, setActiveSection] = useState<"products" | "order">("products");
+  
+  // Get total items count for mobile badge
+  const totalItems = currentOrder?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   // Start a new order if none exists
   useEffect(() => {
@@ -57,8 +61,15 @@ const POSPage: React.FC = () => {
                 variant={activeSection === "order" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setActiveSection("order")}
+                className="relative"
               >
+                <ShoppingCart className="w-4 h-4 mr-1" />
                 Order
+                {totalItems > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center">
+                    {totalItems}
+                  </Badge>
+                )}
               </Button>
             </div>
           )}

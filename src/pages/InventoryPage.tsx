@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Category } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "lucide-react";
+import { Plus, Menu } from "lucide-react";
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
 import ProductsList from "@/components/inventory/ProductsList";
@@ -43,18 +43,19 @@ const InventoryPage: React.FC = () => {
         <Button 
           className="ml-4 flex items-center gap-2"
           onClick={handleAddButtonClick}
+          aria-label={activeTab === "products" ? "Add Product" : "Add Category"}
         >
           <Plus size={16} />
           <span>{isMobile ? "Add" : activeTab === "products" ? "Add Product" : "Add Category"}</span>
         </Button>
       </Header>
       
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="flex justify-between items-center mb-6">
-            <TabsList>
-              <TabsTrigger value="products">Products</TabsTrigger>
-              <TabsTrigger value="categories">Categories</TabsTrigger>
+          <div className="flex justify-between items-center mb-4 md:mb-6">
+            <TabsList className="w-full md:w-auto">
+              <TabsTrigger value="products" className="flex-1 md:flex-auto">Products</TabsTrigger>
+              <TabsTrigger value="categories" className="flex-1 md:flex-auto">Categories</TabsTrigger>
             </TabsList>
           </div>
           

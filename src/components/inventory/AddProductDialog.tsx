@@ -85,7 +85,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl lg:max-w-3xl dark:bg-gray-800 dark:border-gray-700 flex flex-col max-h-[85vh] w-11/12">
+      <DialogContent className="sm:max-w-4xl lg:max-w-5xl dark:bg-gray-800 dark:border-gray-700 flex flex-col max-h-[90vh] w-11/12">
         <DialogHeader>
           <DialogTitle className="dark:text-white text-xl">
             {initialData ? "Edit Product" : "Add New Product"}
@@ -98,7 +98,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
         </DialogHeader>
         
         <ScrollArea className="flex-1 pr-4 -mr-4">
-          <div className="pb-6">
+          <div className="pb-16">
             <ProductForm 
               initialData={initialData} 
               onSubmit={handleSubmit}

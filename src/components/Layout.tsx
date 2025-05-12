@@ -53,20 +53,20 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="fixed top-3 left-3 z-20"
+                className="fixed top-4 left-4 z-20 bg-background/80 backdrop-blur-sm shadow-sm"
                 onClick={() => setSidebarOpen(true)}
               >
                 <Menu size={24} />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-72">
+            <SheetContent side="left" className="p-0 w-72 max-w-[80vw]">
               <Sidebar onNavClick={() => setSidebarOpen(false)} />
             </SheetContent>
           </Sheet>
           
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 pt-14">
+          <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 pt-16">
             {children}
           </main>
         </div>
