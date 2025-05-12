@@ -101,14 +101,17 @@ const CategoryDialog: React.FC<CategoryDialogProps> = ({
           <div className="space-y-2">
             <Label htmlFor="parentCategory">Parent Category (Optional)</Label>
             <Select 
-              value={categoryForm.parentId || ""}
-              onValueChange={(value) => setCategoryForm(prev => ({ ...prev, parentId: value || undefined }))}
+              value={categoryForm.parentId || "none"}
+              onValueChange={(value) => setCategoryForm(prev => ({ 
+                ...prev, 
+                parentId: value === "none" ? undefined : value 
+              }))}
             >
               <SelectTrigger id="parentCategory">
                 <SelectValue placeholder="None (Top Level)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None (Top Level)</SelectItem>
+                <SelectItem value="none">None (Top Level)</SelectItem>
                 {categories
                   .filter(c => c.id !== categoryForm.id)
                   .map(category => (
