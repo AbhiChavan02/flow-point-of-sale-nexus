@@ -28,10 +28,26 @@ const InventoryPage: React.FC = () => {
     }
     setIsCategoryDialogOpen(true);
   };
+
+  const handleAddButtonClick = () => {
+    if (activeTab === "products") {
+      setIsProductDialogOpen(true);
+    } else {
+      handleOpenCategoryDialog();
+    }
+  };
   
   return (
     <Layout>
-      <Header title="Inventory Management" />
+      <Header title="Inventory Management">
+        <Button 
+          className="ml-4 flex items-center gap-2"
+          onClick={handleAddButtonClick}
+        >
+          <Plus size={16} />
+          <span>{isMobile ? "Add" : activeTab === "products" ? "Add Product" : "Add Category"}</span>
+        </Button>
+      </Header>
       
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -40,24 +56,6 @@ const InventoryPage: React.FC = () => {
               <TabsTrigger value="products">Products</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
             </TabsList>
-            
-            {activeTab === "products" ? (
-              <Button 
-                className="flex items-center gap-2"
-                onClick={() => setIsProductDialogOpen(true)}
-              >
-                <Plus size={16} />
-                <span>{isMobile ? "Add" : "Add Product"}</span>
-              </Button>
-            ) : (
-              <Button 
-                className="flex items-center gap-2"
-                onClick={() => handleOpenCategoryDialog()}
-              >
-                <Plus size={16} />
-                <span>{isMobile ? "Add" : "Add Category"}</span>
-              </Button>
-            )}
           </div>
           
           <TabsContent value="products" className="mt-0">

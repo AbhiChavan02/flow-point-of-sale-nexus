@@ -1,9 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBusiness } from "@/contexts/BusinessContext";
 import Sidebar from "@/components/Sidebar";
 import { Navigate } from "react-router-dom";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,6 +17,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
   const { currentUser, isLoading } = useAuth();
   const { isConfigured } = useBusiness();
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Handle authentication check
   if (requireAuth && !isLoading && !currentUser) {
@@ -38,6 +44,35 @@ const Layout: React.FC<LayoutProps> = ({ children, requireAuth = true }) => {
   
   // Main layout with sidebar
   if (requireAuth && currentUser) {
+    if (isMobile) {
+      return (
+        <div className="flex h-screen overflow-hidden">
+          {/* Mobile Sidebar in Sheet */}
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="fixed top-3 left-3 z-20"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu size={24} />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-72">
+              <Sidebar onNavClick={() => setSidebarOpen(false)} />
+            </SheetContent>
+          </Sheet>
+          
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 pt-14">
+            {children}
+          </main>
+        </div>
+      );
+    }
+    
     return (
       <div className="flex h-screen overflow-hidden">
         <Sidebar />

@@ -11,19 +11,33 @@ import {
   LogOut,
   CreditCard,
   BarChart,
-  CreditCard as Subscription
+  CreditCard as Subscription,
+  UserPlus
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onNavClick?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onNavClick }) => {
   const { currentUser, logout } = useAuth();
   const { currentPlan } = useSubscription();
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   const handleLogout = () => {
     logout();
+  };
+  
+  const handleNavClick = () => {
+    if (onNavClick) {
+      onNavClick();
+    }
   };
   
   const navItems = [
@@ -43,7 +57,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className="min-w-60 bg-sidebar border-r h-screen flex flex-col dark:bg-gray-900 dark:border-gray-800">
+    <div className="min-w-60 bg-sidebar border-r h-full flex flex-col dark:bg-gray-900 dark:border-gray-800">
       <div className="p-4 border-b dark:border-gray-800 flex justify-between items-center">
         <h1 className="text-xl font-bold dark:text-white">POS System</h1>
         <ThemeToggle />
@@ -55,6 +69,7 @@ const Sidebar: React.FC = () => {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={handleNavClick}
               className={({ isActive }) =>
                 `flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
                   isActive
@@ -74,6 +89,18 @@ const Sidebar: React.FC = () => {
               )}
             </NavLink>
           ))}
+          
+          {location.pathname === "/users" && (
+            <Button 
+              onClick={handleNavClick}
+              variant="outline" 
+              size="sm" 
+              className="w-full mt-2 flex items-center justify-start"
+            >
+              <UserPlus className="mr-2" size={16} />
+              Add New User
+            </Button>
+          )}
         </nav>
       </div>
       

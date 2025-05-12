@@ -57,7 +57,7 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="h-[85vh] sm:h-[85vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-[90vh] sm:h-[90vh] p-0 flex flex-col">
           <SheetHeader className="px-6 pt-6">
             <SheetTitle>
               {initialData ? "Edit Product" : "Add New Product"}
@@ -85,9 +85,9 @@ const AddProductDialog: React.FC<AddProductDialogProps> = ({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl dark:bg-gray-800 dark:border-gray-700 flex flex-col max-h-[85vh]">
+      <DialogContent className="sm:max-w-2xl lg:max-w-3xl dark:bg-gray-800 dark:border-gray-700 flex flex-col max-h-[85vh] w-11/12">
         <DialogHeader>
-          <DialogTitle className="dark:text-white">
+          <DialogTitle className="dark:text-white text-xl">
             {initialData ? "Edit Product" : "Add New Product"}
           </DialogTitle>
           <DialogDescription className="dark:text-gray-400">
